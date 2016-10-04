@@ -4,7 +4,7 @@
 
  <groupId>felsenhower</groupId>
  <artifactId>stine_calendar_bot</artifactId>
- <version>0.0.1</version>
+ <version>0.0.2</version>
  <packaging>jar</packaging>
 
  <name>stine_calendar_bot</name>

@@ -18,8 +18,11 @@ This application automatically downloads available calendars and caches them. Al
 
 ## What is the current release?
 
-### [v0.0.1-alpha](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.1)
->First working release. Not much refactoring done yet.
+### [v0.0.2-alpha](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.2)
+> Bugfix: Exception when cache directory doesn't exist <br/>
+Added source documentation. <br/>
+Minor cleanups. <br/>
+Restructured resource-bundles.
 
 ## How do I run stine_calendar_bot?
 
