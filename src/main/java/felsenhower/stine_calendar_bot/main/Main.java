@@ -25,7 +25,7 @@ public class Main {
             e.printStackTrace();
         }
     }
-    
+
     private Main(String[] args) throws Exception {
         this.strings = new StringProvider(Locale.GERMAN);
 
@@ -44,13 +44,14 @@ public class Main {
             System.out.println(calendarData);
         } else {
             System.err.println(strings.get("Messages.ExportingFile", output.getFileName()));
+            output.toFile().mkdirs();
             Main.writeCalendarFile(output, calendarData);
         }
     }
 
     private static void writeCalendarFile(Path oldFilePath, Path newFilePath, String content) throws IOException {
-        final File oldFile = new File(oldFilePath.toString());
-        final File newFile = new File(newFilePath.toString());
+        final File oldFile = oldFilePath.toFile();
+        final File newFile = newFilePath.toFile();
 
         FileUtils.writeStringToFile(newFile, content, "UTF-8");
 

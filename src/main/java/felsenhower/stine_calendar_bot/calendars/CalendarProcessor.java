@@ -14,13 +14,16 @@ public class CalendarProcessor {
 
     private final String calendarData;
 
-    public CalendarProcessor(StringProvider strings, String username, String password, Path cache_dir, boolean echoPages) throws Exception {
+    public CalendarProcessor(StringProvider strings, String username, String password, Path cache_dir,
+            boolean echoPages) throws Exception {
 
-        HashMap<String, String> downloadedCalendars = (new CalendarDataDownloader(strings,username,password,echoPages)).getCalendarPool();
+        HashMap<String, String> downloadedCalendars = (new CalendarDataDownloader(strings, username, password,
+                echoPages)).getCalendarPool();
 
-        HashMap<String, String> importedCalendars = (new CalendarDataImporter(strings,cache_dir)).getCalendarPool();
+        HashMap<String, String> importedCalendars = (new CalendarDataImporter(strings, cache_dir)).getCalendarPool();
 
         TreeSet<String> keys = new TreeSet<String>(downloadedCalendars.keySet());
+
         keys.addAll(importedCalendars.keySet());
 
         LinkedList<Calendar> calendars = new LinkedList<Calendar>();
@@ -36,14 +39,11 @@ public class CalendarProcessor {
                 calendars.add(new Calendar(importedCalendarData, strings));
             }
         }
-        
+
         this.calendarData = calendars.getLast().getHeader()
                 + calendars.stream().map(calendar -> calendar.getBody()).collect(Collectors.joining("\n"))
                 + calendars.getLast().getFooter();
-        
     }
-
-
 
     /**
      * @return the calendarData
