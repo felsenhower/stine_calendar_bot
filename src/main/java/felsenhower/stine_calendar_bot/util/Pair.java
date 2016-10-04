@@ -124,9 +124,9 @@ public class Pair<K, V> {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof Pair))
+        if (!(obj instanceof Pair<?,?>))
             return false;
-        Pair other = (Pair) obj;
+        Pair<?,?> other = (Pair<?,?>) obj;
         if (key == null) {
             if (other.key != null)
                 return false;

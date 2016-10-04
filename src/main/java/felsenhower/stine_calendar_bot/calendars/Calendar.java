@@ -7,17 +7,19 @@ import felsenhower.stine_calendar_bot.util.StringProvider;
 
 /**
  * Wraps an ICS calendar and splits it up into its primary sections (header,
- * body, and footer).
+ * body, and footer), or creates the calendar data from those portions.
  * 
  * @see Calendar#getHeader()
  * @see Calendar#getBody()
  * @see Calendar#getFooter()
+ * @see Calendar#getCalendarData()
  */
 public class Calendar {
 
     private final String header;
     private final String footer;
     private final String body;
+    private final String calendarData;
 
     /**
      * Creates a new instance of Calendar
@@ -37,6 +39,8 @@ public class Calendar {
         if (calendarData == null) {
             throw new IllegalArgumentException(messages.get("CalendarDataIsNull"));
         }
+        
+        this.calendarData = calendarData;
 
         Matcher calendarDataMatcher = Pattern.compile(regex.get("WellFormedIcsData"), Pattern.DOTALL)
                 .matcher(calendarData);
@@ -49,6 +53,13 @@ public class Calendar {
         } else {
             throw new IllegalArgumentException(messages.get("CalendarDataIsInvalid"));
         }
+    }
+    
+    /**
+     * Creates a new instance of Calendar from header, body, and footer.
+     */
+    public Calendar(String header, String body, String footer, StringProvider strings) {
+        this(header + "\n" + body + "\n" + footer, strings);
     }
 
     /**
@@ -71,6 +82,13 @@ public class Calendar {
      */
     public String getBody() {
         return body;
+    }
+
+    /**
+     * @return the complete calendar data
+     */
+    public String getCalendarData() {
+        return calendarData;
     }
 
 }

@@ -32,10 +32,15 @@ public class CalendarDataDownloader extends CalendarDataSupplier {
      * 
      * @param strings
      *            a {@link StringProvider}
+     * @param username
+     *            the username for STiNE
+     * @param password
+     *            the password for STiNE
+     * @param echoPages
+     *            whether the pages shall be echo'ed during browsing.
      * @throws IOException
-     *             when anything unexpected happens on the way to the calendar
-     *             download page (Once we are there, every Exception will be
-     *             ignored).
+     *             can only be thrown during browsing to the download page. Once
+     *             we are there, every Exception will be ignored.
      */
     public CalendarDataDownloader(StringProvider strings, String username, String password, boolean echoPages)
             throws IOException {
