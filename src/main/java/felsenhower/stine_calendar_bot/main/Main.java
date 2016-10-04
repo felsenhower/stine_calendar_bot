@@ -16,7 +16,7 @@ import felsenhower.stine_calendar_bot.util.StringProvider;
  * Stine Calendar Bot
  */
 public class Main {
-    public final StringProvider strings;
+    private final StringProvider strings;
 
     public static void main(String[] args) {
         try {
@@ -27,9 +27,10 @@ public class Main {
     }
 
     private Main(String[] args) throws Exception {
-        this.strings = new StringProvider(Locale.GERMAN);
-
+        
         CallLevelWrapper CLI = new CallLevelWrapper(args);
+        
+        this.strings = CLI.getStringProvider();
 
         final String user = CLI.getUser();
         final String pass = CLI.getPass();
@@ -43,7 +44,7 @@ public class Main {
         if (echoCalendar) {
             System.out.println(calendarData);
         } else {
-            System.err.println(strings.get("Messages.ExportingFile", output.getFileName()));
+            System.err.println(strings.get("HumanReadable.Messages.ExportingFile", output.getFileName()));
             output.toFile().mkdirs();
             Main.writeCalendarFile(output, calendarData);
         }

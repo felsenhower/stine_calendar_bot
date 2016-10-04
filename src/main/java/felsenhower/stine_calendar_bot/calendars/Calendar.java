@@ -30,12 +30,15 @@ public class Calendar {
      *             if the calendar data is mal-formed.
      */
     public Calendar(String calendarData, StringProvider strings) throws IllegalArgumentException {
+        
+        StringProvider messages = strings.from("HumanReadable.Messages");
+        StringProvider regex = strings.from("MachineReadable.Regex");
 
         if (calendarData == null) {
-            throw new IllegalArgumentException(strings.get("Exceptions.CalendarDataIsNull"));
+            throw new IllegalArgumentException(messages.get("CalendarDataIsNull"));
         }
 
-        Matcher calendarDataMatcher = Pattern.compile(strings.get("Regex.WellFormedIcsData"), Pattern.DOTALL)
+        Matcher calendarDataMatcher = Pattern.compile(regex.get("WellFormedIcsData"), Pattern.DOTALL)
                 .matcher(calendarData);
         // Check if the calendar data is valid (and throw an Exception
         // otherwise). Split up the data into the three primary sections
@@ -44,7 +47,7 @@ public class Calendar {
             this.body = calendarDataMatcher.group(2);
             this.footer = calendarDataMatcher.group(3);
         } else {
-            throw new IllegalArgumentException(strings.get("Exceptions.CalendarDataIsInvalid"));
+            throw new IllegalArgumentException(messages.get("CalendarDataIsInvalid"));
         }
     }
 

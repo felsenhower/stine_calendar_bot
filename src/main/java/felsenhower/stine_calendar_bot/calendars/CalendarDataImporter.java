@@ -27,18 +27,21 @@ public class CalendarDataImporter extends CalendarDataSupplier {
      *             when anything unexpected happens during the file operations
      */
     public CalendarDataImporter(StringProvider strings, Path calendarCache) throws IOException {
+
+        StringProvider messages = strings.from("HumanReadable.Messages");
         File calendarCacheFile = calendarCache.toFile();
+
         if (calendarCacheFile.exists()) {
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(calendarCache)) {
                 for (Path entry : stream) {
                     String name = FilenameUtils.removeExtension(entry.getFileName().toString());
-                    System.err.println(strings.get("Messages.LoadingLocalFile", name));
+                    System.err.println(messages.get("LoadingLocalFile", name));
                     String calendarData = new String(Files.readAllBytes(entry));
-                    if (Pattern.compile(strings.get("Regex.WellFormedIcsData"), Pattern.DOTALL).matcher(calendarData)
-                            .matches()) {
+                    if (Pattern.compile(strings.get("MachineReadable.Regex.WellFormedIcsData"), Pattern.DOTALL)
+                            .matcher(calendarData).matches()) {
                         this.calendarPool.put(name, calendarData);
                     } else {
-                        System.err.println(strings.get("Messages.CalendarIsInvalid", name));
+                        System.err.println(messages.get("CalendarIsInvalid", name));
                     }
                 }
             }

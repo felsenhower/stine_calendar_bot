@@ -27,6 +27,9 @@ import felsenhower.stine_calendar_bot.util.StringProvider;
 public class CallLevelWrapper {
 
     private final StringProvider strings;
+    private final StringProvider cliStrings;
+    private final StringProvider messages;
+
     final private Options options;
 
     private String user;
@@ -39,7 +42,10 @@ public class CallLevelWrapper {
     public CallLevelWrapper(String[] args) throws IOException {
 
         strings = getLanguage(args, getOptions(null));
-        options = getOptions(strings);
+        cliStrings = strings.from("HumanReadable.CallLevel");
+        messages = strings.from("HumanReadable.Messages");
+
+        options = getOptions(cliStrings);
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd;
@@ -54,29 +60,29 @@ public class CallLevelWrapper {
 
             this.pass = URLDecoder.decode(cmd.getOptionValue("pass"), "UTF-8");
             if (this.pass.equals("--")) {
-                pass = readPassword(strings.get("CallLevel.PasswordQuery"),
-                        strings.get("CallLevel.PasswordFallbackMsg"));
+                pass = readPassword(messages.get("PasswordQuery"), messages.get("PasswordFallbackMsg"));
             }
 
             this.echoPages = cmd.hasOption("echo");
 
-            this.cache_dir = Paths.get(cmd.getOptionValue("cache-dir", strings.get("Directories.CalendarCache")))
+            this.cache_dir = Paths
+                    .get(cmd.getOptionValue("cache-dir", strings.get("MachineReadable.Paths.CalendarCache")))
                     .toAbsolutePath();
 
-            String outputStr = cmd.getOptionValue("output", strings.get("Directories.OutputFile"));
+            String outputStr = cmd.getOptionValue("output", strings.get("MachineReadable.Paths.OutputFile"));
             if (outputStr.equals("--")) {
                 this.echoCalendar = true;
                 this.output = null;
             } else {
                 this.echoCalendar = false;
-                this.output = Paths.get(outputStr).toAbsolutePath();    
+                this.output = Paths.get(outputStr).toAbsolutePath();
             }
-            
+
         } catch (UnrecognizedOptionException e) {
-            System.err.println(strings.get("Exceptions.UnrecognisedOption", e.getOption().toString()));
+            System.err.println(messages.get("UnrecognisedOption", e.getOption().toString()));
             this.printHelp();
         } catch (MissingOptionException e) {
-            System.err.println(strings.get("Exceptions.MissingRequiredOption",
+            System.err.println(messages.get("MissingRequiredOption",
                     e.getMissingOptions().stream()
                             .flatMap(o -> (o instanceof String
                                     ? Collections.singletonList(options.getOption((String) o)).stream()
@@ -85,17 +91,17 @@ public class CallLevelWrapper {
 
             this.printHelp();
         } catch (MissingArgumentException e) {
-            System.err.println(strings.get("Exceptions.MissingRequiredArgument", e.getOption().getLongOpt()));
+            System.err.println(messages.get("MissingRequiredArgument", e.getOption().getLongOpt()));
             this.printHelp();
         } catch (ParseException e) {
-            System.err.println(strings.get("Exceptions.CallLevelParsingException", e.getMessage()));
+            System.err.println(messages.get("CallLevelParsingException", e.getMessage()));
         }
     }
 
-    private static Options getOptions(StringProvider strings) {
+    private Options getOptions(StringProvider strings) {
         final Options options = new Options();
 
-        final UnaryOperator<String> getDescription = (key -> strings == null ? "" : strings.get("CallLevel." + key));
+        final UnaryOperator<String> getDescription = (key -> strings == null ? "" : strings.get(key));
 
         // @formatter:off
         options.addOption(Option.builder("h")
@@ -159,6 +165,7 @@ public class CallLevelWrapper {
             System.err.print(query);
             Scanner scanner = new Scanner(System.in);
             result = scanner.nextLine();
+            scanner.close();
         }
         System.err.println();
         return result;
@@ -171,9 +178,12 @@ public class CallLevelWrapper {
         formatter.setLeftPadding(2);
         formatter.setLongOptSeparator("=");
         formatter.setLongOptPrefix(" --");
-        formatter.setSyntaxPrefix(strings.get("CallLevel.Usage"));
-        formatter.printHelp(strings.get("CallLevel.AppName"), strings.get("CallLevel.HelpHeader"), options,
-                strings.get("CallLevel.HelpFooter"), true);
+        formatter.setSyntaxPrefix(cliStrings.get("Usage"));
+        formatter
+                .printHelp(
+                        cliStrings.get("AppName"), cliStrings.get("HelpHeader"), options, cliStrings.get("HelpFooter",
+                                cliStrings.get("Author"), cliStrings.get("License"), cliStrings.get("ProjectPage")),
+                        true);
         System.exit(0);
     }
 
@@ -195,7 +205,7 @@ public class CallLevelWrapper {
                 } else {
                     StringProvider strings = new StringProvider(Locale.ENGLISH);
                     if (!lang.equals("en")) {
-                        System.err.println(strings.get("CallLevel.LangNotRecognised", lang));
+                        System.err.println(strings.get("HumanReadable.CallLevel.LangNotRecognised", lang));
                     }
                     return strings;
                 }
@@ -211,7 +221,7 @@ public class CallLevelWrapper {
      * @return the {@link StringProvider} according to the specified --language
      *         argument
      */
-    public StringProvider getStrings() {
+    public StringProvider getStringProvider() {
         return strings;
     }
 
@@ -227,13 +237,6 @@ public class CallLevelWrapper {
      */
     public String getPass() {
         return pass;
-    }
-
-    /**
-     * @return the options
-     */
-    public Options getOptions() {
-        return options;
     }
 
     /**

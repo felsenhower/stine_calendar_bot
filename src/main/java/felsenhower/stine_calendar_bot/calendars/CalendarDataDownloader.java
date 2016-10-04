@@ -37,38 +37,40 @@ public class CalendarDataDownloader extends CalendarDataSupplier {
      *             download page (Once we are there, every Exception will be
      *             ignored).
      */
-    public CalendarDataDownloader(StringProvider strings, String username, String password, boolean echoPages) throws IOException {
+    public CalendarDataDownloader(StringProvider strings, String username, String password, boolean echoPages)
+            throws IOException {
 
-        System.err.println(strings.get("Messages.LoadingMainPage"));
-        browser = new Browser(strings.get("Web.Startpage"), echoPages);
+        StringProvider messages = strings.from("HumanReadable.Messages");
+        StringProvider xpath = strings.from("MachineReadable.XPath");
+
+        System.err.println(messages.get("LoadingMainPage"));
+        browser = new Browser(strings.get("MachineReadable.Web.Startpage"), echoPages);
 
         // Get the login form and enter credentials
-        final HtmlForm form = (HtmlForm) browser.getFirstByXPath(strings.get("XPath.LoginForm"));
-        final HtmlTextInput userfield = (HtmlTextInput) Browser.getFirstByXPath(strings.get("XPath.LoginFormUserField"),
+        final HtmlForm form = (HtmlForm) browser.getFirstByXPath(xpath.get("LoginForm"));
+        final HtmlTextInput userfield = (HtmlTextInput) Browser.getFirstByXPath(xpath.get("LoginFormUserField"), form);
+        final HtmlPasswordInput passfield = (HtmlPasswordInput) Browser.getFirstByXPath(xpath.get("LoginFormPassField"),
                 form);
-        final HtmlPasswordInput passfield = (HtmlPasswordInput) Browser
-                .getFirstByXPath(strings.get("XPath.LoginFormPassField"), form);
         userfield.setValueAttribute(username);
         passfield.setValueAttribute(password);
-        System.err.println(strings.get("Messages.LoggingIn"));
-        browser.clickOnElementByXPath(strings.get("XPath.LoginFormSubmitButton"), form);
+        System.err.println(messages.get("LoggingIn"));
+        browser.clickOnElementByXPath(xpath.get("LoginFormSubmitButton"), form);
 
         // Ensure that the correct language is being used.
-        System.err.println(strings.get("Messages.SetLang"));
-        browser.clickOnElementByXPath(strings.get("XPath.LangSwitchAnchor"));
+        System.err.println(messages.get("SetLang"));
+        browser.clickOnElementByXPath(xpath.get("LangSwitchAnchor"));
 
         // Go to the calendar export page
-        System.err.println(strings.get("Messages.PreparingDownload"));
-        browser.clickOnElementByXPath(strings.get("XPath.SchedulerAnchor"));
-        browser.clickOnElementByXPath(strings.get("XPath.SchedulerExportAnchor"));
+        System.err.println(messages.get("PreparingDownload"));
+        browser.clickOnElementByXPath(xpath.get("SchedulerAnchor"));
+        browser.clickOnElementByXPath(xpath.get("SchedulerExportAnchor"));
 
         // Get the drop-down box for months and acquire all possible values
-        HtmlSelect select = (HtmlSelect) browser.getFirstByXPath(strings.get("XPath.MonthSelect"));
+        HtmlSelect select = (HtmlSelect) browser.getFirstByXPath(xpath.get("MonthSelect"));
 
         // Get the Select's list of options.
         @SuppressWarnings("unchecked")
-        final List<HtmlOption> options = (List<HtmlOption>) Browser.getByXPath(strings.get("XPath.MonthSelectOptions"),
-                select);
+        final List<HtmlOption> options = (List<HtmlOption>) Browser.getByXPath(xpath.get("MonthSelectOptions"), select);
 
         URL downloadPageURL = null;
 
@@ -96,19 +98,19 @@ public class CalendarDataDownloader extends CalendarDataSupplier {
                 // will have discarded before. So we need to re-acquire it for
                 // the current page. This time, we select the current option as
                 // well. This conveniently works by the option's name
-                System.err.println(strings.get("Messages.Exporting", name));
-                select = (HtmlSelect) browser.getFirstByXPath(strings.get("XPath.MonthSelect"));
+                System.err.println(messages.get("Exporting", name));
+                select = (HtmlSelect) browser.getFirstByXPath(xpath.get("MonthSelect"));
                 select.setSelectedAttribute(name, true);
 
                 // Click the export button and finally get the anchor for
                 // downloading the calendar. That anchor may be null if the
                 // selected calendar month is empty or the anchor is otherwise
                 // absent.
-                browser.clickOnElementByXPath(strings.get("XPath.ExportButton"));
-                HtmlAnchor downloadLink = (HtmlAnchor) browser.getFirstByXPath(strings.get("XPath.DownloadAnchor"));
+                browser.clickOnElementByXPath(xpath.get("ExportButton"));
+                HtmlAnchor downloadLink = (HtmlAnchor) browser.getFirstByXPath(xpath.get("DownloadAnchor"));
 
                 if (downloadLink != null) {
-                    System.err.println(strings.get("Messages.Downloading"));
+                    System.err.println(messages.get("Downloading"));
                     Page response = downloadLink.click();
                     // First, get the file as a Stream and directly convert that
                     // to byte[]
@@ -127,16 +129,16 @@ public class CalendarDataDownloader extends CalendarDataSupplier {
                             "BEGIN:VCALENDAR", "END:VCALENDAR");
 
                     // Check if the calendarData is well-formed.
-                    if (Pattern.compile(strings.get("Regex.WellFormedIcsData"), Pattern.DOTALL).matcher(calendarData)
-                            .matches()) {
+                    if (Pattern.compile(strings.get("MachineReadable.Regex.WellFormedIcsData"), Pattern.DOTALL)
+                            .matcher(calendarData).matches()) {
                         // Put the calendarData into result HashMap, with the
                         // name as the key.
                         this.calendarPool.put(name, calendarData);
                     } else {
-                        System.err.println(strings.get("Messages.CalendarIsInvalid"));
+                        System.err.println(messages.get("CalendarIsInvalid"));
                     }
                 } else {
-                    System.err.println(strings.get("Messages.CalendarIsEmpty"));
+                    System.err.println(messages.get("CalendarIsEmpty"));
                 }
             } catch (Exception e) {
                 // ignore

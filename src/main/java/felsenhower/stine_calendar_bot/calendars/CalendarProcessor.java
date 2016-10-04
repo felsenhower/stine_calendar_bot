@@ -32,7 +32,7 @@ public class CalendarProcessor {
             if (downloadedCalendars.containsKey(key)) {
                 String downloadedCalendarData = downloadedCalendars.get(key);
                 calendars.add(new Calendar(downloadedCalendarData, strings));
-                System.err.println(strings.get("Messages.OverwritingFile", key));
+                System.err.println(strings.get("HumanReadable.Messages.OverwritingFile", key));
                 Main.writeCalendarFile(key, cache_dir, downloadedCalendarData);
             } else {
                 String importedCalendarData = importedCalendars.get(key);
