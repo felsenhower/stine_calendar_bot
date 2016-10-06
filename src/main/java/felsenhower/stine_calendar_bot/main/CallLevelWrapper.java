@@ -33,6 +33,7 @@ public class CallLevelWrapper {
     private final StringProvider strings;
     private final StringProvider cliStrings;
     private final StringProvider messages;
+    private final StringProvider appInfo;
 
     final private Options options;
 
@@ -56,6 +57,7 @@ public class CallLevelWrapper {
         strings = getLanguage(args, getOptions(null));
         cliStrings = strings.from("HumanReadable.CallLevel");
         messages = strings.from("HumanReadable.Messages");
+        appInfo = strings.from("MachineReadable.App");
 
         // Get the localised option
         options = getOptions(cliStrings);
@@ -246,11 +248,11 @@ public class CallLevelWrapper {
         formatter.setLongOptSeparator("=");
         formatter.setLongOptPrefix(" --");
         formatter.setSyntaxPrefix(cliStrings.get("Usage"));
-        formatter
-                .printHelp(
-                        cliStrings.get("AppName"), cliStrings.get("HelpHeader"), options, cliStrings.get("HelpFooter",
-                                cliStrings.get("Author"), cliStrings.get("License"), cliStrings.get("ProjectPage")),
-                        true);
+        formatter.printHelp(cliStrings.get("UsageTemplate", appInfo.get("Name")),
+                cliStrings.get("HelpHeader", appInfo.get("Name"), appInfo.get("Version")), options,
+                cliStrings.get("HelpFooter", cliStrings.get("Author"), cliStrings.get("License"),
+                        appInfo.get("ProjectPage")),
+                true);
         System.exit(0);
     }
 

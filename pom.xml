@@ -6,9 +6,8 @@
  <artifactId>stine_calendar_bot</artifactId>
  <version>0.0.2</version>
  <packaging>jar</packaging>
-
- <name>stine_calendar_bot</name>
- <url>http://maven.apache.org</url>
+ <name>${project.artifactId}</name>
+ <url>https://github.com/felsenhower/stine_calendar_bot</url>
 
  <properties>
   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,7 +26,13 @@
   </dependency>
  </dependencies>
  <build>
-  <finalName>stine_calendar_bot</finalName>
+  <finalName>${project.name}</finalName>
+  <resources>
+    <resource> 
+     <directory>src/main/resources</directory> 
+     <filtering>false</filtering> 
+    </resource> 
+  </resources>
   <plugins>
    <plugin>
     <groupId>org.apache.maven.plugins</groupId>
