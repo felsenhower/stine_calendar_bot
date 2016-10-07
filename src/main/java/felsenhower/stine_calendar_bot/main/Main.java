@@ -31,31 +31,33 @@ public class Main {
 
     private Main(String[] args) throws Exception {
 
-        // Do all the console interaction
-        CallLevelWrapper CLI = new CallLevelWrapper(args);
+        // Do all the console interaction. Hopefully, this will exit the
+        // application if anything goes wrong, so we don't have to check for
+        // null values in the following lines, but let's see about that...
+        CallLevelWrapper cli = new CallLevelWrapper(args);
 
         // The ConsoleWrapper actually supplies its own StringProvider which it
         // acquires by parsing the (optional) --language option.
-        this.strings = CLI.getStringProvider();
+        this.strings = cli.getStringProvider();
 
-        final String user = CLI.getUser();
-        final String pass = CLI.getPass();
-        final boolean echoPages = CLI.isEchoPages();
-        final Path cache_dir = CLI.getCalendarCache();
-        final Path output = CLI.getOutputFilename();
-        final boolean echoCalendar = CLI.isEchoCalendar();
+        final String username = cli.getUsername();
+        final String password = cli.getPassword();
+        final boolean echoPages = cli.isEchoPages();
+        final Path calendarCache = cli.getCalendarCache();
+        final Path outputFile = cli.getOutputFile();
+        final boolean echoCalendar = cli.isEchoCalendar();
 
         // Acquire the calendar data
         // NOTE: This takes time.
-        String calendarData = (new CalendarProcessor(strings, user, pass, cache_dir, echoPages)).getCalendarData();
+        String calendarData = (new CalendarProcessor(strings, username, password, calendarCache, echoPages)).getCalendarData();
 
         // Echo the calendar to stdout or save it to file
         if (echoCalendar) {
             System.out.println(calendarData);
         } else {
-            System.err.println(strings.get("HumanReadable.Messages.ExportingFile", output.getFileName()));
-            output.toFile().mkdirs();
-            Main.writeCalendarFile(output, calendarData);
+            System.err.println(strings.get("HumanReadable.Messages.ExportingFile", outputFile.getFileName()));
+            outputFile.toFile().mkdirs();
+            Main.writeCalendarFile(outputFile, calendarData);
         }
     }
 

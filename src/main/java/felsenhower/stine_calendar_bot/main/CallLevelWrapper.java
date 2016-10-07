@@ -25,10 +25,19 @@ import org.apache.commons.cli.UnrecognizedOptionException;
 import felsenhower.stine_calendar_bot.util.StringProvider;
 
 /**
- * Acts as a wrapper for console interaction
- *
+ * Creates a new instance
+ * 
+ * @param args
+ *            the submitted args from the main method.
  */
 public class CallLevelWrapper {
+
+    private final String username;
+    private final String password;
+    private final boolean echoPages;
+    private final Path calendarCache;
+    private final Path outputFile;
+    private final boolean echoCalendar;
 
     private final StringProvider strings;
     private final StringProvider cliStrings;
@@ -37,57 +46,79 @@ public class CallLevelWrapper {
 
     final private Options options;
 
-    private String user;
-    private String pass;
-    private boolean echoPages;
-    private Path calendarCache;
-    private Path output;
-    private boolean echoCalendar;
-
-    /**
-     * Creates a new instance
-     * 
-     * @param args
-     *            the submitted args from the main method.
-     */
     @SuppressWarnings("unchecked")
     public CallLevelWrapper(String[] args) throws IOException {
+        String username = null;
+        String password = null;
+        boolean echoPages = false;
+        Path calendarCache = null;
+        Path outputFile = null;
+        boolean echoCalendar = false;
+
+        // These temporary options don't have descriptions and have their
+        // required-value all set to false
+        final Options tempOptions = getOptions(null);
+
+        final CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = null;
+        StringProvider strings = null;
 
         // Get the StringProvider
-        strings = getLanguage(args, getOptions(null));
-        cliStrings = strings.from("HumanReadable.CallLevel");
-        messages = strings.from("HumanReadable.Messages");
-        appInfo = strings.from("MachineReadable.App");
-
-        // Get the localised option
-        options = getOptions(cliStrings);
-
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cmd;
         try {
-            cmd = parser.parse(options, args);
-
-            // If no arguments are supplied, or --help is used, we will exit
-            // after printing the help screen
-            if (cmd.getOptions().length == 0 || cmd.hasOption("help")) {
-                this.printHelp();
+            cmd = parser.parse(tempOptions, args);
+            if (cmd.hasOption("language")) {
+                String lang = cmd.getOptionValue("language").toLowerCase();
+                if (lang.equals("de")) {
+                    strings = new StringProvider(Locale.GERMAN);
+                } else {
+                    strings = new StringProvider(Locale.ENGLISH);
+                    if (!lang.equals("en")) {
+                        System.err.println(strings.get("HumanReadable.CallLevel.LangNotRecognised", lang));
+                    }
+                }
+            } else {
+                strings = new StringProvider(new Locale(Locale.getDefault().getLanguage()));
             }
+        } catch (Exception e) {
+            strings = new StringProvider(Locale.ENGLISH);
+        }
 
-            this.user = cmd.getOptionValue("user");
+        this.strings = strings;
+        this.cliStrings = strings.from("HumanReadable.CallLevel");
+        this.messages = strings.from("HumanReadable.Messages");
+        this.appInfo = strings.from("MachineReadable.App");
+
+        // Get the localised options, with all required fields enabled as well.
+        // Note that we are not yet applying the options to any command line,
+        // because we still want to exit if only the help screen shall be
+        // displayed first, but of course, we do need the localised options
+        // here.
+        this.options = getOptions(this.cliStrings);
+
+        // If no arguments are supplied, or --help is used, we will exit
+        // after printing the help screen
+        if (cmd.getOptions().length == 0 || cmd.hasOption("help")) {
+            printHelp();
+        }
+
+        try {
+            cmd = parser.parse(this.options, args);
+
+            username = cmd.getOptionValue("user");
 
             // URL-decode the password (STiNE doesn't actually allow special
             // chars in passwords, but meh...)
-            this.pass = URLDecoder.decode(cmd.getOptionValue("pass"), "UTF-8");
+            password = URLDecoder.decode(cmd.getOptionValue("pass"), "UTF-8");
             // Double-dash signals that the password shall be read from stdin
-            if (this.pass.equals("--")) {
-                pass = readPassword(messages.get("PasswordQuery"), messages.get("PasswordFallbackMsg"));
+            if (password.equals("--")) {
+                password = readPassword(messages.get("PasswordQuery"), messages.get("PasswordFallbackMsg"));
             }
 
-            this.echoPages = cmd.hasOption("echo");
+            echoPages = cmd.hasOption("echo");
 
             // the cache-dir argument is optional, so we read it with a default
             // value
-            this.calendarCache = Paths
+            calendarCache = Paths
                     .get(cmd.getOptionValue("cache-dir", strings.get("MachineReadable.Paths.CalendarCache")))
                     .toAbsolutePath();
 
@@ -95,11 +126,11 @@ public class CallLevelWrapper {
             // double-dash is specified (for echo to stdout)
             String outputStr = cmd.getOptionValue("output", strings.get("MachineReadable.Paths.OutputFile"));
             if (outputStr.equals("--")) {
-                this.echoCalendar = true;
-                this.output = null;
+                echoCalendar = true;
+                outputFile = null;
             } else {
-                this.echoCalendar = false;
-                this.output = Paths.get(outputStr).toAbsolutePath();
+                echoCalendar = false;
+                outputFile = Paths.get(outputStr).toAbsolutePath();
             }
 
         } catch (UnrecognizedOptionException e) {
@@ -110,7 +141,7 @@ public class CallLevelWrapper {
             // here is why:
             //
             // It returns an unparametrised list, to make your job especially
-            // hard, whose element may be:
+            // hard, whose elements may be:
             // - String-instances, if there are single independent options
             // missing (NOT the stupid Option itself, just why????)
             // - OptionGroup-instances, if there are whole OptionGroups missing
@@ -144,6 +175,59 @@ public class CallLevelWrapper {
         } catch (ParseException e) {
             System.err.println(messages.get("CallLevelParsingException", e.getMessage()));
         }
+
+        this.username = username;
+        this.password = password;
+        this.echoPages = echoPages;
+        this.calendarCache = calendarCache;
+        this.outputFile = outputFile;
+        this.echoCalendar = echoCalendar;
+    }
+
+    /**
+     * Gets the password from stdin
+     * 
+     * @param query
+     *            the query to the user
+     * @param errorMsg
+     *            the message to display when the input gets somehow redirected
+     *            and System.console() becomes null.
+     * @return the entered password
+     */
+    private static String readPassword(String query, String errorMsg) {
+        final String result;
+        if (System.console() != null) {
+            System.err.print(query);
+            result = new String(System.console().readPassword());
+        } else {
+            System.err.println(errorMsg);
+            System.err.print(query);
+            Scanner scanner = new Scanner(System.in);
+            result = scanner.nextLine();
+            scanner.close();
+        }
+        System.err.println();
+        return result;
+    }
+
+    /**
+     * Prints the help screen for the current Options instance and exits the
+     * application
+     */
+    private void printHelp() {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.setOptionComparator(null);
+        formatter.setDescPadding(4);
+        formatter.setLeftPadding(2);
+        formatter.setLongOptSeparator("=");
+        formatter.setLongOptPrefix(" --");
+        formatter.setSyntaxPrefix(cliStrings.get("Usage"));
+        formatter.printHelp(cliStrings.get("UsageTemplate", appInfo.get("Name")),
+                cliStrings.get("HelpHeader", appInfo.get("Name"), appInfo.get("Version")), this.options,
+                cliStrings.get("HelpFooter", cliStrings.get("Author"), cliStrings.get("License"),
+                        appInfo.get("ProjectPage")),
+                true);
+        System.exit(0);
     }
 
     /**
@@ -211,102 +295,17 @@ public class CallLevelWrapper {
     }
 
     /**
-     * Gets the password from stdin
-     * 
-     * @param query
-     *            the query to the user
-     * @param errorMsg
-     *            the message to display when the input gets somehow redirected
-     *            and System.console() becomes null.
-     * @return the entered password
-     */
-    private static String readPassword(String query, String errorMsg) {
-        final String result;
-        if (System.console() != null) {
-            System.err.print(query);
-            result = new String(System.console().readPassword());
-        } else {
-            System.err.println(errorMsg);
-            System.err.print(query);
-            Scanner scanner = new Scanner(System.in);
-            result = scanner.nextLine();
-            scanner.close();
-        }
-        System.err.println();
-        return result;
-    }
-
-    /**
-     * Prints the help screen for the current Options instance and exits the
-     * application
-     */
-    private void printHelp() {
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.setOptionComparator(null);
-        formatter.setDescPadding(4);
-        formatter.setLeftPadding(2);
-        formatter.setLongOptSeparator("=");
-        formatter.setLongOptPrefix(" --");
-        formatter.setSyntaxPrefix(cliStrings.get("Usage"));
-        formatter.printHelp(cliStrings.get("UsageTemplate", appInfo.get("Name")),
-                cliStrings.get("HelpHeader", appInfo.get("Name"), appInfo.get("Version")), options,
-                cliStrings.get("HelpFooter", cliStrings.get("Author"), cliStrings.get("License"),
-                        appInfo.get("ProjectPage")),
-                true);
-        System.exit(0);
-    }
-
-    /**
-     * Acquires the StringProvider instance for the specified language.
-     * 
-     * @param args
-     *            the arguments to extract the language from
-     * @return a {@link StringProvider}
-     */
-    private static StringProvider getLanguage(String[] args, Options options) {
-
-        try {
-            CommandLineParser parser = new DefaultParser();
-            CommandLine cmd = parser.parse(options, args);
-            if (cmd.hasOption("language")) {
-                String lang = cmd.getOptionValue("language").toLowerCase();
-                if (lang.equals("de")) {
-                    return new StringProvider(Locale.GERMAN);
-                } else {
-                    StringProvider strings = new StringProvider(Locale.ENGLISH);
-                    if (!lang.equals("en")) {
-                        System.err.println(strings.get("HumanReadable.CallLevel.LangNotRecognised", lang));
-                    }
-                    return strings;
-                }
-            } else {
-                return new StringProvider(new Locale(Locale.getDefault().getLanguage()));
-            }
-        } catch (ParseException e) {
-            return new StringProvider(Locale.ENGLISH);
-        }
-    }
-
-    /**
-     * @return the {@link StringProvider} according to the specified --language
-     *         argument
-     */
-    public StringProvider getStringProvider() {
-        return strings;
-    }
-
-    /**
      * @return the username (STiNE)
      */
-    public String getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
     /**
      * @return the password (STiNE)
      */
-    public String getPass() {
-        return pass;
+    public String getPassword() {
+        return password;
     }
 
     /**
@@ -326,8 +325,8 @@ public class CallLevelWrapper {
     /**
      * @return the output filename
      */
-    public Path getOutputFilename() {
-        return output;
+    public Path getOutputFile() {
+        return outputFile;
     }
 
     /**
@@ -339,4 +338,11 @@ public class CallLevelWrapper {
         return echoCalendar;
     }
 
+    /**
+     * @return the {@link StringProvider} according to the specified --language
+     *         argument
+     */
+    public StringProvider getStringProvider() {
+        return strings;
+    }
 }
