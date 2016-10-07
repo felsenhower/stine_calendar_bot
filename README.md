@@ -30,9 +30,29 @@ Binaries can be downloaded from the [releases page](https://github.com/felsenhow
 
 You will need a working installation of Java 1.8.
 
-Use the `--help`-Option for more info.
+Start the application with `java -jar stine_calendar_bot.jar [options]` or `./stine_calendar_bot.jar [options]` (not on Windows).
 
-I have only tested this with Linux. If it successfully works on Windows as well, be so kind as to tell me.
+A simple execution might look like this:
+
+```
+java -jar stine_calendar_bot.jar --language=de --user=baqxxxx --pass=password
+```
+The calendar cache directory will default to "./calendar_cache" and the output willd default to "./stine_calendar.ics" relative to the working directory.
+
+You can avoid having your password get saved in your .bash_history in these two ways:
+- Use `java -jar stine_calendar_bot.jar --language=de --user=baqxxxx --pass=--` and get queried for your password.
+- By storing it in a password manager:
+    - Install `gnome-keyring-query`
+    - Store the password with `echo password | gnome-keyring-query set stine`
+    - Call this application with:
+    ```
+    gnome-keyring-query get stine | \
+    java -jar stine_calendar_bot.jar --language=de --user=baqxxxx --pass=--
+    ```
+    
+Use `java -jar stine_calendar_bot.jar --help` for more information.
+
+I have only tested this with Linux. If it successfully works on Windows and Mac as well, be so kind as to tell me.
 
 There is no GUI implemented or planned.
 
@@ -43,9 +63,9 @@ As of september 2016, STiNE appears to be completely available in English as wel
 ## How do I build stine_calendar_bot?
 
 Use the following tools:
-- Git
-- Java 1.8
-- Maven
+- git (optional)
+- java 1.8
+- maven
 - make (optional)
 
 Source can be compiled with `make all` and `mvn package shade:shade` respectively.
