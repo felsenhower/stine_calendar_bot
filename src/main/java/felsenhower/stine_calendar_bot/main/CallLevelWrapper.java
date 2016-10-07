@@ -160,14 +160,14 @@ public class CallLevelWrapper {
             // hookers.
             try {
                 System.err.println(messages.get("MissingRequiredOption", ((List<?>) (e.getMissingOptions())).stream()
-                        .filter(Object.class::isInstance).map(Object.class::cast).flatMap(o -> {
+                        .filter(Object.class::isInstance).map(Object.class::cast).map(o -> {
                             if (o instanceof String) {
-                                return Collections.singletonList(options.getOption((String) o)).stream();
+                                return Collections.singletonList(options.getOption((String) o));
                             } else {
-                                return ((OptionGroup) o).getOptions().stream();
+                                return ((OptionGroup) o).getOptions();
                             }
-                        }).filter(Option.class::isInstance).map(Option.class::cast).map(o -> o.getLongOpt())
-                        .collect(Collectors.joining(", "))));
+                        }).flatMap(o -> o.stream()).filter(Option.class::isInstance).map(Option.class::cast)
+                        .map(o -> o.getLongOpt()).collect(Collectors.joining(", "))));
                 this.printHelp();
             } catch (Exception totallyMoronicException) {
                 throw new RuntimeException("I hate 3rd party libraries!", totallyMoronicException);
