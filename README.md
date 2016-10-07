@@ -68,4 +68,10 @@ Use the following tools:
 - maven
 - make (optional)
 
-Source can be compiled with `make all` and `mvn package shade:shade` respectively.
+Source can be downloaded and compiled with:
+```
+git clone https://github.com/felsenhower/stine_calendar_bot.git
+cd stine_calendar_bot
+make all
+```
+Instead of `make all` you can also use `mvn package shade:shade` respectively.
