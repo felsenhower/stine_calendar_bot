@@ -5,6 +5,7 @@ import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.function.UnaryOperator;
@@ -46,7 +47,6 @@ public class CallLevelWrapper {
 
     final private Options options;
 
-    @SuppressWarnings("unchecked")
     public CallLevelWrapper(String[] args) throws IOException {
         String username = null;
         String password = null;
@@ -152,23 +152,26 @@ public class CallLevelWrapper {
             //
             // This makes the job of actually displaying all the options as a
             // comma-separated list unnecessarily hard and hence leads to this
-            // ugly contraption of Java-8-statements which btw. is the one and
-            // only cause for the @SuppressWarnings("unchecked") over the method
-            // header. I just couldn't stand this 5 lines long mess of yellow
-            // underlined code in Eclipse because it's clearly (?) not
-            // completely obvious that all the resulting streams are of the type
-            // <Option>.
+            // ugly contraption of Java-8-statements. But hey, at least it's not
+            // as ugly as the Java 7 version (for me at least).
             // Sorry!
             // TODO: Write better code.
             // TODO: Write my own command line interpreter, with blackjack and
             // hookers.
-            System.err.println(messages.get("MissingRequiredOption",
-                    e.getMissingOptions().stream()
-                            .flatMap(o -> (o instanceof String
-                                    ? Collections.singletonList(options.getOption((String) o)).stream()
-                                    : ((OptionGroup) o).getOptions().stream()))
-                            .map(o -> ((Option) o).getLongOpt()).collect(Collectors.joining(", "))));
-            this.printHelp();
+            try {
+                System.err.println(messages.get("MissingRequiredOption", ((List<?>) (e.getMissingOptions())).stream()
+                        .filter(Object.class::isInstance).map(Object.class::cast).flatMap(o -> {
+                            if (o instanceof String) {
+                                return Collections.singletonList(options.getOption((String) o)).stream();
+                            } else {
+                                return ((OptionGroup) o).getOptions().stream();
+                            }
+                        }).filter(Option.class::isInstance).map(Option.class::cast).map(o -> o.getLongOpt())
+                        .collect(Collectors.joining(", "))));
+                this.printHelp();
+            } catch (Exception totallyMoronicException) {
+                throw new RuntimeException("I hate 3rd party libraries!", totallyMoronicException);
+            }
         } catch (MissingArgumentException e) {
             System.err.println(messages.get("MissingRequiredArgument", e.getOption().getLongOpt()));
             this.printHelp();
