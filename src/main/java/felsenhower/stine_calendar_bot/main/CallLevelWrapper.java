@@ -102,7 +102,8 @@ public class CallLevelWrapper {
 
         // If no arguments are supplied, or --help is used, we will exit
         // after printing the help screen
-        if (cmd.getOptions().length == 0 || cmd.hasOption("help")) {
+        if (cmd.getOptions().length == 0 || cmd.hasOption("help")
+                || (cmd.hasOption("language") && cmd.getOptions().length == 1)) {
             printHelp();
         }
 
