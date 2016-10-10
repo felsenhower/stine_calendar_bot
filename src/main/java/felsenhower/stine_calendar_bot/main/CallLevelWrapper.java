@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
@@ -45,6 +47,8 @@ public class CallLevelWrapper {
     private final StringProvider messages;
     private final StringProvider appInfo;
 
+    private boolean isLangInitialised = false;
+
     final private Options options;
 
     public CallLevelWrapper(String[] args) throws IOException {
@@ -57,7 +61,7 @@ public class CallLevelWrapper {
 
         // These temporary options don't have descriptions and have their
         // required-value all set to false
-        final Options tempOptions = getOptions(null);
+        final Options tempOptions = getOptions();
 
         final CommandLineParser parser = new DefaultParser();
         CommandLine cmd = null;
@@ -93,7 +97,8 @@ public class CallLevelWrapper {
         // because we still want to exit if only the help screen shall be
         // displayed first, but of course, we do need the localised options
         // here.
-        this.options = getOptions(this.cliStrings);
+        this.isLangInitialised = true;
+        this.options = getOptions();
 
         // If no arguments are supplied, or --help is used, we will exit
         // after printing the help screen
@@ -240,57 +245,66 @@ public class CallLevelWrapper {
      * required options. These initial options should not be printed with a
      * HelpFormatter.
      */
-    private Options getOptions(StringProvider strings) {
+    private Options getOptions() {
         final Options options = new Options();
 
-        final UnaryOperator<String> getDescription = (key -> strings == null ? "" : strings.get(key));
+        final BiFunction<String, String[], String> getDescription = ((key,
+                args) -> (this.isLangInitialised
+                        ? this.strings.from("HumanReadable.CallLevel").get(key,
+                                (args != null
+                                        ? Arrays.stream(args).map(arg -> this.strings.get(arg)).toArray(Object[]::new)
+                                        : null))
+                        : ""));
 
         // @formatter:off
         options.addOption(Option.builder("h")
                                 .longOpt("help")
-                                .desc(getDescription.apply("HelpDescription"))
+                                .desc(getDescription.apply("HelpDescription", null))
                                 .build());
 
         options.addOption(Option.builder("l")
                                 .longOpt("language")
                                 .hasArg()
                                 .argName("en|de")
-                                .desc(getDescription.apply("LangDescription"))
+                                .desc(getDescription.apply("LangDescription", null))
                                 .build());
 
         options.addOption(Option.builder("u")
                                 .longOpt("user")
-                                .required(strings != null)
+                                .required(this.isLangInitialised)
                                 .hasArg()
                                 .argName("user")
-                                .desc(getDescription.apply("UserDescription"))
+                                .desc(getDescription.apply("UserDescription", null))
                                 .build());
 
         options.addOption(Option.builder("p")
                                 .longOpt("pass")
-                                .required(strings != null)
+                                .required(this.isLangInitialised)
                                 .hasArg()
                                 .argName("pass")
-                                .desc(getDescription.apply("PassDescription"))
+                                .desc(getDescription.apply("PassDescription", null))
                                 .build());
+        
         
         options.addOption(Option.builder("e")
                                 .longOpt("echo")
-                                .desc(getDescription.apply("EchoDescription"))
+                                .desc(getDescription.apply("EchoDescription",null))
                                 .build());
 
         options.addOption(Option.builder("c")
                                 .longOpt("cache-dir")
                                 .hasArg()
                                 .argName("dir")
-                                .desc(getDescription.apply("CacheDirDescription"))
+                                .desc(getDescription.apply("CacheDirDescription",
+                                        new String[]{"MachineReadable.Paths.CalendarCache"}))
                                 .build());
         
         options.addOption(Option.builder("o")
                                 .longOpt("output")
                                 .hasArg()
                                 .argName("file")
-                                .desc(getDescription.apply("OutputDescription"))
+                                .desc(getDescription.apply("OutputDescription",
+                                        new String[]{"MachineReadable.Paths.OutputFile"}))
                                 .build());
         // @formatter:on
 

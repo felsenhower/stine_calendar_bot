@@ -48,7 +48,7 @@
       <manifest>
        <addClasspath>true</addClasspath>
        <classpathPrefix>lib/</classpathPrefix>
-       <mainClass>felsenhower.stine_calendar_bot.main.Main</mainClass>
+       <mainClass>${project.groupId}.${project.artifactId}.main.Main</mainClass>
       </manifest>
      </archive>
     </configuration>
