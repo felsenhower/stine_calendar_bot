@@ -18,12 +18,11 @@ This application automatically downloads available calendars and caches them. Al
 
 ## What is the current release?
 
-### [v0.0.3](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.3)
-> Fixed issues on the help screen.<br/>
-Improved character encoding handling for German localisation.<br/>
-Added version identifier to help screen.<br/>
-Changed project url to github page.<br/>
-Code cleanups.
+### [v0.0.4](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.4)
+> Added verbose description to the footer on help screen.<br/>
+Added more information to the option explanations on help screen.<br/>
+Removed the message that options were missing when only specifying --language and nothing else.<br/>
+Made the low-level part a bit more flexible in general.
 
 ## How do I run stine_calendar_bot?
 
