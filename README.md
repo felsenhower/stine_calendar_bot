@@ -18,10 +18,8 @@ This application automatically downloads available calendars and caches them. Al
 
 ## What is the current release?
 
-### [v0.0.5](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.5)
-> Fixed raised exceptions when specifying unknown options.
-<br/>
-Changed groupId from felsenhower to io.github.felsenhower to match industry standards.
+### [v0.0.6](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.6)
+> Hotfix: removed forgotten debug statement
 
 ## How do I run stine_calendar_bot?
 

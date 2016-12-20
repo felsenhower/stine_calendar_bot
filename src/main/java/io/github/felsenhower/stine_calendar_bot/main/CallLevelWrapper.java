@@ -82,7 +82,6 @@ public class CallLevelWrapper {
 			}
 		} catch (Exception e) {
 			strings = new StringProvider(Locale.ENGLISH);
-			e.printStackTrace();
 		}
 
 		this.strings = strings;
