@@ -18,11 +18,10 @@ This application automatically downloads available calendars and caches them. Al
 
 ## What is the current release?
 
-### [v0.0.4](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.4)
-> Added verbose description to the footer on help screen.<br/>
-Added more information to the option explanations on help screen.<br/>
-Removed the message that options were missing when only specifying --language and nothing else.<br/>
-Made the low-level part a bit more flexible in general.
+### [v0.0.5](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.5)
+> Fixed raised exceptions when specifying unknown options.
+<br/>
+Changed groupId from felsenhower to io.github.felsenhower to match industry standards.
 
 ## How do I run stine_calendar_bot?
 
@@ -30,7 +29,9 @@ Binaries can be downloaded from the [releases page](https://github.com/felsenhow
 
 You will need a working installation of Java 1.8.
 
-Start the application with `java -jar stine_calendar_bot.jar [options]` or `./stine_calendar_bot.jar [options]` (not on Windows).
+Start the application with `java -jar stine_calendar_bot.jar [options]`.
+
+On Unix systems, `./stine_calendar_bot.jar [options]` should work as well. I recently found out that this doesn't work by default on Arch Linux and that you'll need to install `binfmt-java` from AUR here.
 
 A simple execution might look like this:
 

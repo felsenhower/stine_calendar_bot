@@ -1,4 +1,4 @@
-package felsenhower.stine_calendar_bot.main;
+package io.github.felsenhower.stine_calendar_bot.main;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
 
-import felsenhower.stine_calendar_bot.calendars.CalendarProcessor;
-import felsenhower.stine_calendar_bot.util.StringProvider;
+import io.github.felsenhower.stine_calendar_bot.calendars.CalendarProcessor;
+import io.github.felsenhower.stine_calendar_bot.util.StringProvider;
 
 /**
  * STiNE Calendar Bot: An automatic calendar download bot for STiNE.

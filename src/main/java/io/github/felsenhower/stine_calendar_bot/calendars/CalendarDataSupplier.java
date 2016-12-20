@@ -1,4 +1,4 @@
-package felsenhower.stine_calendar_bot.calendars;
+package io.github.felsenhower.stine_calendar_bot.calendars;
 
 import java.util.HashMap;
 

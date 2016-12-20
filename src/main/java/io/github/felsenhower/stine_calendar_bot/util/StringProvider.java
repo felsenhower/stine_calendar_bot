@@ -1,4 +1,4 @@
-package felsenhower.stine_calendar_bot.util;
+package io.github.felsenhower.stine_calendar_bot.util;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class StringProvider {
 
-    private static final String BUNDLES_LOCATION = "felsenhower.stine_calendar_bot";
+    private static final String BUNDLES_LOCATION = "io.github.felsenhower.stine_calendar_bot";
     private static final String INDEX_FILE = "index";
 
     private final HashMap<String, String> strings;

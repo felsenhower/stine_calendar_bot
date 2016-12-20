@@ -1,4 +1,4 @@
-package felsenhower.stine_calendar_bot.calendars;
+package io.github.felsenhower.stine_calendar_bot.calendars;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 
-import felsenhower.stine_calendar_bot.util.StringProvider;
+import io.github.felsenhower.stine_calendar_bot.util.StringProvider;
 
 /**
  * This class extends {@link CalendarDataSupplier} and supplies the HashMap of

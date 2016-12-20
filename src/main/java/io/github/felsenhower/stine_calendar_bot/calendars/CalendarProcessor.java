@@ -1,4 +1,4 @@
-package felsenhower.stine_calendar_bot.calendars;
+package io.github.felsenhower.stine_calendar_bot.calendars;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -7,8 +7,8 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import felsenhower.stine_calendar_bot.main.Main;
-import felsenhower.stine_calendar_bot.util.StringProvider;
+import io.github.felsenhower.stine_calendar_bot.main.Main;
+import io.github.felsenhower.stine_calendar_bot.util.StringProvider;
 
 /**
  * Processes all the downloaed and imported calendars, and merges them into one

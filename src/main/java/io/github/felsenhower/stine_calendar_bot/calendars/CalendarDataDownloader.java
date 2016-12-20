@@ -1,4 +1,4 @@
-package felsenhower.stine_calendar_bot.calendars;
+package io.github.felsenhower.stine_calendar_bot.calendars;
 
 import java.io.IOException;
 import java.net.URL;
@@ -15,9 +15,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
-import felsenhower.stine_calendar_bot.util.Browser;
-import felsenhower.stine_calendar_bot.util.CharsetDetector;
-import felsenhower.stine_calendar_bot.util.StringProvider;
+import io.github.felsenhower.stine_calendar_bot.util.Browser;
+import io.github.felsenhower.stine_calendar_bot.util.CharsetDetector;
+import io.github.felsenhower.stine_calendar_bot.util.StringProvider;
 
 /**
  * This class extends {@link CalendarDataSupplier} and supplies the HashMap of

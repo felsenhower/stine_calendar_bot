@@ -1,9 +1,9 @@
-package felsenhower.stine_calendar_bot.calendars;
+package io.github.felsenhower.stine_calendar_bot.calendars;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import felsenhower.stine_calendar_bot.util.StringProvider;
+import io.github.felsenhower.stine_calendar_bot.util.StringProvider;
 
 /**
  * Wraps an ICS calendar and splits it up into its primary sections (header,

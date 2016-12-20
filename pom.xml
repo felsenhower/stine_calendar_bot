@@ -2,9 +2,9 @@
  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
  <modelVersion>4.0.0</modelVersion>
 
- <groupId>felsenhower</groupId>
+ <groupId>io.github.felsenhower</groupId>
  <artifactId>stine_calendar_bot</artifactId>
- <version>0.0.4</version>
+ <version>0.0.5</version>
  <packaging>jar</packaging>
  <name>${project.artifactId}</name>
  <url>https://github.com/felsenhower/stine_calendar_bot</url>
