@@ -78,7 +78,7 @@ public class CallLevelWrapper {
 					}
 				}
 			} else {
-				strings = new StringProvider(new Locale(Locale.getDefault().getLanguage()));
+				strings = new StringProvider(Locale.ENGLISH);
 			}
 		} catch (Exception e) {
 			strings = new StringProvider(Locale.ENGLISH);
@@ -103,7 +103,7 @@ public class CallLevelWrapper {
 			if (cmd.hasOption("help") || (cmd.hasOption("language") && cmd.getOptions().length == 1)) {
 				printHelp();
 			}
-			
+
 			cmd = parser.parse(this.options, args, false);
 
 			username = cmd.getOptionValue("user");
@@ -255,11 +255,12 @@ public class CallLevelWrapper {
 			
 			options.addOption(Option.builder("l")
 					                .longOpt("language")
+					                .required()
 					                .hasArg()
 					                .argName("en|de")
 					                .desc(cliStrings.get("LangDescription"))
 					                .build());
-			
+
 			options.addOption(Option.builder("u")
 					                .longOpt("user")
 					                .required()
@@ -299,6 +300,11 @@ public class CallLevelWrapper {
 			// @formatter:off
 			options.addOption(Option.builder("l").longOpt("language").hasArg().build());
 			options.addOption(Option.builder("h").longOpt("help").build());
+			options.addOption(Option.builder("u").longOpt("user").hasArg().argName("user").build());
+			options.addOption(Option.builder("p").longOpt("pass").hasArg().argName("pass").build());
+			options.addOption(Option.builder("e").longOpt("echo").build());
+			options.addOption(Option.builder("c").longOpt("cache-dir").hasArg().argName("dir").build());
+			options.addOption(Option.builder("o").longOpt("output").hasArg().argName("file").build());
 			// @formatter:on
 		}
 		return options;
