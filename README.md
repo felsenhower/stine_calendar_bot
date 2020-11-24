@@ -18,24 +18,30 @@ This application automatically downloads available calendars and caches them. Al
 
 ## What is the current release?
 
-### [v0.0.6](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.6)
-> Hotfix: removed forgotten debug statement
+### [v0.0.7](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.7)
+> Updates dependencies.
+>
+> Make --language option mandatory.
+
 
 ## How do I run stine_calendar_bot?
 
 Binaries can be downloaded from the [releases page](https://github.com/felsenhower/stine_calendar_bot/releases).
 
-You will need a working installation of Java 1.8.
+You will need a working installation of Java >=1.8.
 
 Start the application with `java -jar stine_calendar_bot.jar [options]`.
 
-On Unix systems, `./stine_calendar_bot.jar [options]` should work as well. I recently found out that this doesn't work by default on Arch Linux and that you'll need to install `binfmt-java` from AUR here.
+On some Unix systems, `./stine_calendar_bot.jar [options]` should work as well. On Arch Linux you'll need to install `binfmt-java` from the AUR if you want to do that.
 
 A simple execution might look like this:
 
 ```
 java -jar stine_calendar_bot.jar --language=de --user=baqxxxx --pass=password
 ```
+
+**Note that since v0.0.7, the `--language` option is mandatory! The automatic language detection didn't really work very well and most users will have their terminal set to English anyway.**
+
 The calendar cache directory will default to "./calendar_cache" and the output willd default to "./stine_calendar.ics" relative to the working directory.
 
 You can avoid having your password get saved in your .bash_history in these two ways:
@@ -48,7 +54,7 @@ You can avoid having your password get saved in your .bash_history in these two 
     gnome-keyring-query get stine | \
     java -jar stine_calendar_bot.jar --language=de --user=baqxxxx --pass=--
     ```
-    
+
 Use `java -jar stine_calendar_bot.jar --help` for more information.
 
 I have only tested this with Linux. If it successfully works on Windows and Mac as well, be so kind as to tell me.
@@ -57,7 +63,11 @@ There is no GUI implemented or planned.
 
 ## What languages does this application support?
 
-As of september 2016, STiNE appears to be completely available in English as well as German. stine_calendar_bot will try to detect your default language and set it to German if applicable, and to English in all other cases. This changes the language of the exported files, the displayed page contents if explicitly echo'ed and the application's localisation. You can overwrite this with the `--language=`-Option which is strongly recommended in case something goes badly wrong.
+As of september 2016, STiNE appears to be completely available in English as well as German.
+stine_calendar_bot will not try to detect your default language.
+You will always have to select your language with the
+`--language=` option which accepts the values `de` and `en`.
+This changes the language of the exported files, the displayed page contents if explicitly echo'ed and the application's localisation.
 
 ## How do I build stine_calendar_bot?
 
