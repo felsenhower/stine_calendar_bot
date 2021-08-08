@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.IOUtils;
 
 import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
@@ -29,7 +30,7 @@ public class CalendarDataDownloader extends CalendarDataSupplier {
 
     /**
      * Creates a new instance of CalendarDataDownloader
-     * 
+     *
      * @param strings
      *            a {@link StringProvider}
      * @param username
@@ -51,19 +52,29 @@ public class CalendarDataDownloader extends CalendarDataSupplier {
         System.err.println(messages.get("LoadingMainPage"));
         browser = new Browser(strings.get("MachineReadable.Web.Startpage"), echoPages);
 
-        // Get the login form and enter credentials
-        final HtmlForm form = (HtmlForm) browser.getFirstByXPath(xpath.get("LoginForm"));
-        final HtmlTextInput userfield = (HtmlTextInput) Browser.getFirstByXPath(xpath.get("LoginFormUserField"), form);
-        final HtmlPasswordInput passfield = (HtmlPasswordInput) Browser.getFirstByXPath(xpath.get("LoginFormPassField"),
-                form);
+        // Redirect to the start page
+        final DomElement redirectHeader = browser.getFirstByXPath(xpath.get("RedirectHdr"));
+        browser.clickOnElementByXPath(xpath.get("RedirectAnchor"), redirectHeader);
+
+        // Load login page
+        System.err.println(messages.get("LoadingLoginPage"));
+        browser.clickOnElementByXPath(xpath.get("LoginButton"));
+
+        // Enter credentials and login
+        final HtmlTextInput userfield = (HtmlTextInput) browser.getFirstByXPath(xpath.get("LoginFormUserField"));
+        final HtmlPasswordInput passfield = (HtmlPasswordInput) browser.getFirstByXPath(xpath.get("LoginFormPassField"));
         userfield.setValueAttribute(username);
         passfield.setValueAttribute(password);
         System.err.println(messages.get("LoggingIn"));
-        browser.clickOnElementByXPath(xpath.get("LoginFormSubmitButton"), form);
+        browser.clickOnElementByXPath(xpath.get("LoginFormSubmitButton"));
 
         // Ensure that the correct language is being used.
         System.err.println(messages.get("SetLang"));
         browser.clickOnElementByXPath(xpath.get("LangSwitchAnchor"));
+
+        // Redirect to the start page (again :C)
+        final DomElement redirectHeader2 = browser.getFirstByXPath(xpath.get("RedirectHdr"));
+        browser.clickOnElementByXPath(xpath.get("RedirectAnchor"), redirectHeader2);
 
         // Go to the calendar export page
         System.err.println(messages.get("PreparingDownload"));

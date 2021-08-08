@@ -20,7 +20,7 @@ public class CalendarProcessor {
 
     /**
      * Creates a new instance and hence starts the processing.
-     * 
+     *
      * @param strings
      *            a {@link StringProvider}
      * @param username
@@ -65,6 +65,11 @@ public class CalendarProcessor {
                 String importedCalendarData = importedCalendars.get(key);
                 calendars.add(new Calendar(importedCalendarData, strings));
             }
+        }
+
+        if (calendars.size() == 0) {
+          System.err.println(strings.get("HumanReadable.Messages.NoCalendars"));
+          System.exit(0);
         }
 
         // Finally, steal a header and footer from any calendar (They are very
