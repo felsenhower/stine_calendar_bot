@@ -16,14 +16,6 @@ STiNE is also able to export appointments as calendar files. Unfortunately, this
 
 This application automatically downloads available calendars and caches them. All available calendars (past, present and future) can then be merged into a single ICS file.
 
-## What is the current release?
-
-### [v0.0.7](https://github.com/felsenhower/stine_calendar_bot/releases/tag/v0.0.7)
-> Updates dependencies.
->
-> Make --language option mandatory.
-
-
 ## How do I run stine_calendar_bot?
 
 Binaries can be downloaded from the [releases page](https://github.com/felsenhower/stine_calendar_bot/releases).

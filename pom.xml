@@ -4,7 +4,7 @@
 
  <groupId>io.github.felsenhower</groupId>
  <artifactId>stine_calendar_bot</artifactId>
- <version>0.0.7</version>
+ <version>0.0.8</version>
  <packaging>jar</packaging>
  <name>${project.artifactId}</name>
  <url>https://github.com/felsenhower/stine_calendar_bot</url>
