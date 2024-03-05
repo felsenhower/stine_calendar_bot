@@ -1,4 +1,5 @@
-⚠️ `stine_calendar_bot` has been deprecated without replacement. It would be cool if somebody could re-implement its functionality in something different than Java.
+⚠️ `stine_calendar_bot` has been deprecated without replacement and will not be developed any further.
+It would be cool if somebody could re-implement its functionality in something different than Java.
 
 ---
 
